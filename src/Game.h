@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "MainMenu.h"
+#include "Entity.h"
 
 using namespace sf;
 using namespace std;
@@ -28,6 +29,9 @@ class Game {
 		void onClose();
 
 		void drawMainMenu();
+		void drawScene();
+
+		void resetGame();
 
 		static const int width = 1280;
 		static const int height = 720;
@@ -38,13 +42,18 @@ class Game {
 			Menu,
 			Playing,
 			Paused,
-			Death
+			Death,
+			Switching
 		};
 
 		/*
 		 * GAME VARIABLES
 		 */
 		GameState gameState;
+
+		Hero *hero;
+
+		int mouseX, mouseY;
 
 		/*
 		 * UTILITIES
@@ -68,13 +77,19 @@ class Game {
 		Texture *splashTexture;
 		Texture *logoTexture;
 		Texture *menuBGTexture;
+		Texture *ambientTexture;
+
+		Texture *heroTexture;
 
 		/*
-		 * STAND-ALONE SPRITES
+		 * SPRITES
 		 */
 		Sprite *splashSprite;
 		Sprite *logoSprite;
 		Sprite *menuBGSprite;
+		Sprite *ambientSprite;
+
+		Sprite *heroSprite;
 
 		/*
 		 * FONTS
@@ -87,6 +102,7 @@ class Game {
 		 */
 		Clock splashTimer;
 		Time splashMin;
+		Clock tickTimer;
 
 		/*
 		 * THREADS

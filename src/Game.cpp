@@ -12,7 +12,7 @@ using namespace std;
 
 Game::Game(): mode(1280, 720, 32) {
 	cout << "Creating instance " << endl;
-	ctx.antialiasingLevel = 2;
+	ctx.antialiasingLevel = 8;
 	splash = new RenderWindow(mode, "GunMan", Style::None, ctx);
 	gameState = GameState::Splash;
 
@@ -59,7 +59,12 @@ bool Game::onLoad() {
 	Vector2u logoSize = logoTexture->getSize();
 	logoSprite->setOrigin(logoSize.x/2, 0);
 	logoSprite->setPosition(width/2, 10);
+
 	if(!loadSprite(&menuBGSprite, &menuBGTexture, "res/menu_bg.png")){
+		return false;
+	}
+
+	if(!loadSprite(&ambientSprite, &ambientTexture, "res/ambient.png")){
 		return false;
 	}
 
@@ -67,7 +72,15 @@ bool Game::onLoad() {
 	if(!menuFont->loadFromFile("res/masterplan.ttf")){
 		cout << "[SEVERE] Failed to open font" << endl;
 		return false;
+	}else{
+		cout << "[INFO] Loaded font" << endl;
 	}
+
+	if(!loadSprite(&heroSprite, &heroTexture, "res/zombie1.png")){
+		return false;
+	}
+
+	hero = new Hero(heroSprite);
 
 	mainMenu = new MainMenu(*menuFont);
 

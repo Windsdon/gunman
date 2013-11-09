@@ -30,11 +30,13 @@ void MainMenu::draw(RenderWindow* window) {
 }
 
 void MainMenu::event(Event& e) {
-	if(e.type == Event::KeyPressed){
+	if(e.type == Event::KeyPressed && !selected){
 		if(e.key.code == Keyboard::Up || e.key.code == Keyboard::W){
 			selectedIndex = abs((--selectedIndex)%optionCount);
 		}else if(e.key.code == Keyboard::Down || e.key.code == Keyboard::S){
 			selectedIndex = abs((++selectedIndex)%optionCount);
+		}else if(e.key.code == Keyboard::Return){
+			selected = true;
 		}
 	}
 }
