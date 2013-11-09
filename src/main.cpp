@@ -12,7 +12,7 @@ using namespace std;
 
 
 int main(int argc, char **argv) {
-	cout << "GunMan, build " << __DATE__ << " - " << __TIME__ << endl;
+	cout << "GunMan - STATIC, build " << __DATE__ << " - " << __TIME__ << endl;
 
 	Game game;
 	game.onStart();
