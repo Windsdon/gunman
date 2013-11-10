@@ -43,8 +43,9 @@ void Level::killProjectile(Projectile* projectile) {
 void Level::fireProjectile(int type, const Vector2f& position, double angle) {
 	Texture* bulletTexture = game->bulletTexture;
 	projectiles.push_back(
-			new Projectile(position.x, position.y, 3, angle - 90 * 3.141 / 180,
+			new Projectile(position.x, position.y, 1, angle - 90 * 3.141 / 180,
 					2400, bulletTexture));
+	game->shootSound1->play();
 
 }
 
@@ -70,6 +71,7 @@ void Level::tick(double deltaTime) {
 			Zombie *enemy = enemies[j];
 			if(projectile->collides(*enemy) && !enemy->isInvulnerable()){
 				enemy->damage(projectile->getDamage());
+				game->hitSound1->play();
 
 				projectile->pierced(1);
 				if(projectile->isDead()){
@@ -78,6 +80,7 @@ void Level::tick(double deltaTime) {
 
 				enemy->setInvulnerable(seconds(enemy->getInvTime()));
 				if(enemy->isDead()){
+					game->explosionSound1->play();
 					killEnemy(enemy);
 				}
 			}
@@ -123,7 +126,7 @@ void Level::tick(double deltaTime) {
 }
 
 void Level::spawnZombie() {
-	Zombie *zombie = new Zombie(new Sprite(*(game->zombieTexture)), 10, 30, 0,
+	Zombie *zombie = new Zombie(new Sprite(*(game->zombieTexture)), 10, 22, 0,
 			0);
 	ClassicZombieAI *ai = new ClassicZombieAI(this, zombie);
 

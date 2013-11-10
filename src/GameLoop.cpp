@@ -45,11 +45,27 @@ void Game::onUpdate() {
 //			shootScheduled = true;
 //		}
 
-		if(e.type == Event::MouseButtonPressed){
-			if(e.mouseButton.button == Mouse::Right){
+		if (e.type == Event::MouseButtonPressed) {
+			if (e.mouseButton.button == Mouse::Right) {
 				spawn = true;
 			}
 		}
+	}
+
+	if (gameState == GameState::Menu) {
+		switch (mainMenu->getSelectedOption()) {
+		case MainMenu::Option::Exit:
+			gameState = GameState::Stopped;
+			break;
+		case MainMenu::Option::Play:
+			resetGame();
+			gameState = GameState::Playing;
+			break;
+		}
+	}
+
+	if (gameState != GameState::Playing) {
+		return;
 	}
 
 	float heroMoveX = 0, heroMoveY = 0;
@@ -85,33 +101,23 @@ void Game::onUpdate() {
 	hero->move(heroMoveX * heroMoveSpeed * deltaTime,
 			heroMoveY * heroMoveSpeed * deltaTime);
 
-	if (Mouse::isButtonPressed(Mouse::Left) && shootTimer.getElapsedTime() >= shootInterval) {
+	if (Mouse::isButtonPressed(Mouse::Left)
+			&& shootTimer.getElapsedTime() >= shootInterval) {
 		shootTimer.restart();
-		level->fireProjectile(Projectile::Type::Bullet, hero->getBulletOutputPoint(), heroAngle);
+		level->fireProjectile(Projectile::Type::Bullet,
+				hero->getBulletOutputPoint(), heroAngle);
 	}
 
-	if(spawn){
+	if (spawn) {
 		cout << "Spawning zombie" << endl;
 		level->spawnZombie();
 	}
 
 	level->tick(deltaTime); //move zombies, projectiles and updates explosions
 
-	if (gameState == GameState::Menu) {
-		switch (mainMenu->getSelectedOption()) {
-		case MainMenu::Option::Exit:
-			gameState = GameState::Stopped;
-			break;
-		case MainMenu::Option::Play:
-			resetGame();
-			gameState = GameState::Playing;
-			break;
-		}
-	}
-
 }
 
 void Game::resetGame() {
 	level->getHero()->setPosition(width / 2, height / 2);
-	shootInterval = seconds(0.5);
+	shootInterval = seconds(0.1);
 }

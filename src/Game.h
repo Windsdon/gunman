@@ -8,6 +8,7 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <string>
 #include "MainMenu.h"
 #include "Entity.h"
@@ -26,15 +27,15 @@ class Game {
 	private:
 		bool onLoad();
 		void loop();
-		void onEvent();
 		void onUpdate();
 		void onRender();
-		void onClose();
 
 		void drawMainMenu();
 		void drawScene();
 
 		void resetGame();
+
+		bool loadSound(Sound**, SoundBuffer**, const string&);
 
 		static const int width = 1280;
 		static const int height = 720;
@@ -96,6 +97,18 @@ class Game {
 		Sprite *ambientSprite;
 
 		Sprite *heroSprite;
+
+		/*
+		 * SOUNDS
+		 */
+		SoundBuffer *hitBuffer1;
+		Sound *hitSound1;
+
+		SoundBuffer *shootBuffer1;
+		Sound *shootSound1;
+
+		SoundBuffer *explosionBuffer1;
+		Sound *explosionSound1;
 
 		/*
 		 * FONTS

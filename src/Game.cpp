@@ -92,6 +92,18 @@ bool Game::onLoad() {
 		return false;
 	}
 
+	if(!loadSound(&hitSound1, &hitBuffer1, "res/hit1.wav")){
+		return false;
+	}
+
+	if(!loadSound(&shootSound1, &shootBuffer1, "res/shoot1.wav")){
+		return false;
+	}
+
+	if(!loadSound(&explosionSound1, &explosionBuffer1, "res/explode1.wav")){
+		return false;
+	}
+
 	level = new Level(new Hero(heroSprite), this);
 
 	mainMenu = new MainMenu(*menuFont);
@@ -106,6 +118,21 @@ bool Game::loadTexture(Texture* texture, const string& name) {
 	} else {
 		cout << "[INFO] Texture loaded: " << name << endl;
 	}
+
+	return true;
+}
+
+bool Game::loadSound(Sound** sound, SoundBuffer** buffer, const string &path) {
+	*buffer = new SoundBuffer();
+	if(!(*buffer)->loadFromFile(path)){
+		cout << "[SEVERE] Failed to load sound " << path << endl;
+		return false;
+	}else{
+		cout << "[INFO] Loaded sound " << path << endl;
+	}
+
+	*sound = new Sound(**buffer);
+	(*sound)->setLoop(false);
 
 	return true;
 }
