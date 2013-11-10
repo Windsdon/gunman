@@ -22,6 +22,8 @@ class Level {
 		void killEnemy(Zombie*);
 		void killProjectile(Projectile*);
 
+		void spawnZombie();
+
 		void fireProjectile(int, const Vector2f&, double);
 
 		void tick(double);

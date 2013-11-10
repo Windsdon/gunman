@@ -28,6 +28,7 @@ void Game::loop() {
 void Game::onUpdate() {
 	Event e;
 	//bool shootScheduled = false;
+	bool spawn = false;
 
 	while (window->pollEvent(e)) {
 		if (gameState == GameState::Menu) {
@@ -43,6 +44,12 @@ void Game::onUpdate() {
 //		if (e.type == Event::MouseButtonPressed) {
 //			shootScheduled = true;
 //		}
+
+		if(e.type == Event::MouseButtonPressed){
+			if(e.mouseButton.button == Mouse::Right){
+				spawn = true;
+			}
+		}
 	}
 
 	float heroMoveX = 0, heroMoveY = 0;
@@ -81,6 +88,11 @@ void Game::onUpdate() {
 	if (Mouse::isButtonPressed(Mouse::Left) && shootTimer.getElapsedTime() >= shootInterval) {
 		shootTimer.restart();
 		level->fireProjectile(Projectile::Type::Bullet, hero->getBulletOutputPoint(), heroAngle);
+	}
+
+	if(spawn){
+		cout << "Spawning zombie" << endl;
+		level->spawnZombie();
 	}
 
 	level->tick(deltaTime);

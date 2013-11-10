@@ -61,4 +61,16 @@ void Level::tick(double deltaTime) {
 			projectile != projectiles.end(); ++projectile) {
 		(*projectile)->move(deltaTime);
 	}
+
+	for(vector<Zombie*>::iterator enemy = enemies.begin(); enemy != enemies.end(); ++enemy){
+		(*enemy)->getAI()->tick(deltaTime);
+	}
+}
+
+void Level::spawnZombie() {
+	Zombie *zombie = new Zombie(new Sprite(*(game->zombieTexture)), 1, 40, 0, 0);
+	ClassicZombieAI *ai = new ClassicZombieAI(this, zombie);
+
+	zombie->setAI(ai);
+	addEnemy(zombie);
 }

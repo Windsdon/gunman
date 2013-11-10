@@ -28,6 +28,9 @@ class Entity {
 
 		virtual const Vector2f getBulletOutputPoint() const = 0;
 
+		virtual double getDistance(Entity*) const;
+		virtual const Vector2f getPointingVector(Entity*) const;
+
 	private:
 		double radius;
 };
@@ -39,6 +42,7 @@ class Mob: public Entity {
 		virtual int damage(int) = 0;
 		virtual double getMoveSpeed() = 0;
 		virtual double getAngle() const = 0;
+		virtual void move(double, double) = 0;
 
 	protected:
 		int life;
@@ -49,7 +53,7 @@ class Mob: public Entity {
 class Hero: public Mob {
 	public:
 		Hero(Sprite*);
-		void move(double, double);
+		virtual void move(double, double);
 
 		virtual void rotate(double);
 		virtual const Vector2f getPosition() const;
@@ -70,6 +74,8 @@ class Hero: public Mob {
 class Zombie: public Mob{
 	public:
 		Zombie(Sprite*, int, int, int, int);
+
+		virtual void move(double, double);
 
 		virtual void rotate(double);
 		virtual const Vector2f getPosition() const;

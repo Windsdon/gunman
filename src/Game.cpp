@@ -87,6 +87,11 @@ bool Game::onLoad() {
 		return false;
 	}
 
+	zombieTexture = new Texture();
+	if(!loadTexture(zombieTexture, "res/zombie1.png")){
+		return false;
+	}
+
 	level = new Level(new Hero(heroSprite), this);
 
 	mainMenu = new MainMenu(*menuFont);

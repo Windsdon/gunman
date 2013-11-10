@@ -6,6 +6,7 @@
  */
 
 #include "Entity.h"
+#include <iostream>
 #include <math.h>
 
 bool Entity::collides(const Entity& other) const {
@@ -24,19 +25,19 @@ Mob::Mob(double radius, int life, int maxLife) :
 		Entity(radius), life(life), maxLife(life) {
 }
 
-Hero::Hero(Sprite* sprite): Mob(size, defaultLife, defaultLife), sprite(sprite) {
+Hero::Hero(Sprite* sprite) :
+		Mob(size, defaultLife, defaultLife), sprite(sprite) {
 	sprite->setOrigin(32, 32);
 	angle = 0;
 }
-
 
 void Hero::move(double x, double y) {
 	sprite->move(x, y);
 }
 
-void Hero::rotate(double angle){
+void Hero::rotate(double angle) {
 	this->angle = angle;
-	sprite->setRotation(-angle * 180/3.141 + 180);
+	sprite->setRotation(-angle * 180 / 3.141 + 180);
 }
 
 const Vector2f Hero::getPosition() const {
@@ -57,17 +58,20 @@ void Hero::setPosition(double x, double y) {
 }
 
 const Vector2f Hero::getBulletOutputPoint() const {
-	return getPosition() + Vector2f(getRadius()*cos(-angle + 3.141/2), getRadius()*sin(-angle + 3.141/2));
+	return getPosition()
+			+ Vector2f(getRadius() * cos(-angle + 3.141 / 2),
+					getRadius() * sin(-angle + 3.141 / 2));
 }
 
-Zombie::Zombie(Sprite* sprite, int life, int size, int x, int y): Mob(size, life, life), sprite(sprite), ai(NULL) {
+Zombie::Zombie(Sprite* sprite, int life, int size, int x, int y) :
+		Mob(size, life, life), sprite(sprite), ai(NULL) {
 	sprite->setOrigin(Vector2f(32, 32));
 	sprite->setPosition(x, y);
 }
 
 void Zombie::rotate(double angle) {
 	this->angle = angle;
-	sprite->setRotation(-angle * 180/3.141 + 180);
+	sprite->setRotation(-angle * 180 / 3.141 + 180);
 }
 
 const Vector2f Zombie::getPosition() const {
@@ -75,6 +79,7 @@ const Vector2f Zombie::getPosition() const {
 }
 
 void Zombie::draw(RenderWindow* window) {
+	window->draw(*sprite);
 }
 
 int Zombie::damage(int damage) {
@@ -98,10 +103,29 @@ double Zombie::getAngle() const {
 	return angle;
 }
 
-AI* Zombie::getAI(){
+AI* Zombie::getAI() {
 	return ai;
 }
 
 double Hero::getAngle() const {
 	return angle;
+}
+
+double Entity::getDistance(Entity* other) const {
+	Vector2f thisPos = getPosition();
+	Vector2f otherPos = other->getPosition();
+	return sqrt(pow(thisPos.x - otherPos.x, 2) + pow(thisPos.y - otherPos.y, 2));
+}
+
+const Vector2f Entity::getPointingVector(Entity* other) const {
+	double distance = getDistance(other);
+	Vector2f thisPos = getPosition();
+	Vector2f otherPos = other->getPosition();
+
+	return Vector2f((otherPos.x - thisPos.x) / distance,
+			(otherPos.y - thisPos.y) / distance);
+}
+
+void Zombie::move(double x, double y) {
+	sprite->move(x, y);
 }

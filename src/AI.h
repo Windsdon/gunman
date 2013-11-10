@@ -12,15 +12,16 @@ class Zombie;
 
 class AI {
 	public:
-		AI(Level&, Zombie&);
+		AI(Level*, Zombie*);
 		virtual void tick(double) = 0;
 
 	protected:
-		Level &level;
-		Zombie &creature;
+		Level *level;
+		Zombie *creature;
 };
 
-class ClassicZombieAI {
+class ClassicZombieAI: public AI {
 	public:
+		ClassicZombieAI(Level* level, Zombie* creature): AI(level, creature) {};
 		virtual void tick(double);
 };

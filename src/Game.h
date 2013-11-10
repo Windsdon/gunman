@@ -85,6 +85,7 @@ class Game {
 		Texture *bulletTexture;
 
 		Texture *heroTexture;
+		Texture *zombieTexture;
 
 		/*
 		 * SPRITES
