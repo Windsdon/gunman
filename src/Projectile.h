@@ -23,6 +23,10 @@ class Projectile: public Entity {
 
 		virtual const Vector2f getBulletOutputPoint() const {return Vector2f();};
 
+		virtual bool isDead() const;
+		virtual void pierced(int);
+		virtual int getDamage();
+
 		enum Type {
 			Bullet
 		};
@@ -35,4 +39,8 @@ class Projectile: public Entity {
 		float velocity;
 
 		Sprite bullet;
+
+		int uses;
+		int maxUses;
+		int damage;
 };

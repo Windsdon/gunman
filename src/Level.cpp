@@ -7,6 +7,7 @@
 
 #include "Level.h"
 #include "Game.h"
+#include <iostream>
 
 Level::Level(Hero* hero, Game* game) :
 		hero(hero), game(game) {
@@ -17,21 +18,24 @@ void Level::addEnemy(Zombie* enemy) {
 }
 
 void Level::killEnemy(Zombie* enemy) {
-	for (vector<Zombie*>::iterator it = enemies.begin(); it != enemies.end();
-			++it) {
+	for (vector<Zombie*>::iterator it = enemies.begin(); it != enemies.end();) {
 		if (*it == enemy) {
 			enemies.erase(it);
-			delete enemy;
+			//TODO delete enemy;
+		}else{
+			++it;
 		}
 	}
 }
 
 void Level::killProjectile(Projectile* projectile) {
 	for (vector<Projectile*>::iterator it = projectiles.begin();
-			it != projectiles.end(); ++it) {
+			it != projectiles.end();) {
 		if (*it == projectile) {
 			projectiles.erase(it);
-			delete projectile;
+			//TODO delete projectile;
+		} else {
+			++it;
 		}
 	}
 }
@@ -41,6 +45,7 @@ void Level::fireProjectile(int type, const Vector2f& position, double angle) {
 	projectiles.push_back(
 			new Projectile(position.x, position.y, 3, angle - 90 * 3.141 / 180,
 					2400, bulletTexture));
+
 }
 
 Hero* Level::getHero() {
@@ -56,15 +61,34 @@ vector<Projectile*>& Level::getProjectiles() {
 }
 
 void Level::tick(double deltaTime) {
-	for (vector<Projectile*>::iterator projectile = projectiles.begin();
-			projectile != projectiles.end(); ++projectile) {
-		(*projectile)->move(deltaTime);
+	hero->updateInvulnerable();
+
+	for(unsigned int i = 0; i < projectiles.size(); i++){
+		Projectile *projectile = projectiles[i];
+		projectile->move(deltaTime);
+		for(unsigned int j = 0; j < enemies.size(); j++){
+			Zombie *enemy = enemies[j];
+			if(projectile->collides(*enemy) && !enemy->isInvulnerable()){
+				enemy->damage(projectile->getDamage());
+
+				projectile->pierced(1);
+				if(projectile->isDead()){
+					killProjectile(projectiles[i]);
+				}
+
+				enemy->setInvulnerable(seconds(enemy->getInvTime()));
+				if(enemy->isDead()){
+					killEnemy(enemy);
+				}
+			}
+		}
 	}
 
 	for (vector<Zombie*>::iterator enemy = enemies.begin();
 			enemy != enemies.end(); ++enemy) {
 		(*enemy)->getAI()->tick(deltaTime);
 		Zombie *thisEnemy = *enemy;
+		thisEnemy->updateInvulnerable();
 		for (vector<Zombie*>::iterator enemy2 = enemies.begin();
 				enemy2 != enemies.end(); ++enemy2) {
 			if (enemy2 == enemy) {
@@ -82,11 +106,24 @@ void Level::tick(double deltaTime) {
 						moveIntensity * vecMove.y);
 			}
 		}
+
+		if (!hero->isInvulnerable()) {
+			if (thisEnemy->collides(*hero)) {
+				cout << "Hit" << endl;
+				hero->damage(1);
+				hero->setInvulnerable(seconds(hero->getInvTime()));
+				Vector2f hitVec = thisEnemy->getPointingVector(hero);
+				int knockback = thisEnemy->getKnockback()
+						- hero->getKnockbackResistance()
+						+ thisEnemy->getDistance(hero);
+				hero->move(knockback * hitVec.x, knockback * hitVec.y);
+			}
+		}
 	}
 }
 
 void Level::spawnZombie() {
-	Zombie *zombie = new Zombie(new Sprite(*(game->zombieTexture)), 1, 30, 0,
+	Zombie *zombie = new Zombie(new Sprite(*(game->zombieTexture)), 10, 30, 0,
 			0);
 	ClassicZombieAI *ai = new ClassicZombieAI(this, zombie);
 

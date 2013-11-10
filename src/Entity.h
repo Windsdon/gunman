@@ -31,6 +31,8 @@ class Entity {
 		virtual double getDistance(Entity*) const;
 		virtual const Vector2f getPointingVector(Entity*) const;
 
+		virtual bool isDead() const = 0;
+
 	private:
 		double radius;
 };
@@ -43,11 +45,24 @@ class Mob: public Entity {
 		virtual double getMoveSpeed() = 0;
 		virtual double getAngle() const = 0;
 		virtual void move(double, double) = 0;
+		virtual bool isInvulnerable();
+		virtual void setInvulnerable(Time);
+		virtual void updateInvulnerable();
+		virtual double getInvTime();
+		virtual int getKnockback();
+		virtual int getKnockbackResistance();
+		virtual bool isDead() const;
 
 	protected:
 		int life;
 		int maxLife;
 		double angle;
+		bool invulnerable;
+		Clock invClock;
+		Time invDuration;
+		double invTime;
+		int knockback;
+		int knockbackResistance;
 };
 
 class Hero: public Mob {
@@ -67,7 +82,7 @@ class Hero: public Mob {
 	private:
 		Sprite *sprite;
 		static const int defaultLife = 20;
-		static const int size = 40;
+		static const int size = 20;
 
 };
 

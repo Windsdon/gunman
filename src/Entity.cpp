@@ -29,6 +29,10 @@ Hero::Hero(Sprite* sprite) :
 		Mob(size, defaultLife, defaultLife), sprite(sprite) {
 	sprite->setOrigin(32, 32);
 	angle = 0;
+	invTime = 0.5;
+	knockback = 15;
+	knockbackResistance = 0;
+	setInvulnerable(seconds(0));
 }
 
 void Hero::move(double x, double y) {
@@ -67,6 +71,9 @@ Zombie::Zombie(Sprite* sprite, int life, int size, int x, int y) :
 		Mob(size, life, life), sprite(sprite), ai(NULL) {
 	sprite->setOrigin(Vector2f(32, 32));
 	sprite->setPosition(x, y);
+	invTime = 0.1;
+	knockback = 10;
+	knockbackResistance = 0;
 }
 
 void Zombie::rotate(double angle) {
@@ -128,4 +135,34 @@ const Vector2f Entity::getPointingVector(Entity* other) const {
 
 void Zombie::move(double x, double y) {
 	sprite->move(x, y);
+}
+
+bool Mob::isInvulnerable() {
+	return invulnerable;
+}
+
+void Mob::setInvulnerable(Time duration) {
+	invClock.restart();
+	invDuration = duration;
+}
+
+void Mob::updateInvulnerable() {
+	invulnerable = ((invDuration - invClock.getElapsedTime()).asSeconds() > 0);
+	//cout << "Hero is inv? " << ((invDuration - invClock.getElapsedTime()).asSeconds() > 0) << endl;
+}
+
+double Mob::getInvTime() {
+	return invTime;
+}
+
+int Mob::getKnockback() {
+	return knockback;
+}
+
+int Mob::getKnockbackResistance() {
+	return knockbackResistance;
+}
+
+bool Mob::isDead() const {
+	return life <= 0;
 }

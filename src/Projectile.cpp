@@ -14,6 +14,10 @@ Projectile::Projectile(float x, float y, float radius, float angle,
 	ymove = -sin(angle);
 
 	bullet.setRotation(-angle * 180 / 3.141 + 90);
+
+	uses = 0;
+	maxUses = 1;
+	damage = 1;
 }
 
 const Vector2f Projectile::getPosition() const {
@@ -29,4 +33,16 @@ void Projectile::move(double time) {
 	y += ymove * velocity * time;
 
 	bullet.setPosition(getPosition());
+}
+
+bool Projectile::isDead() const {
+	return uses >= maxUses;
+}
+
+void Projectile::pierced(int count) {
+	uses+=count;
+}
+
+int Projectile::getDamage() {
+	return damage;
 }
