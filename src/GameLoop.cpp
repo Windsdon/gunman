@@ -95,7 +95,7 @@ void Game::onUpdate() {
 		level->spawnZombie();
 	}
 
-	level->tick(deltaTime);
+	level->tick(deltaTime); //move zombies, projectiles and updates explosions
 
 	if (gameState == GameState::Menu) {
 		switch (mainMenu->getSelectedOption()) {

@@ -36,8 +36,7 @@ void Level::killProjectile(Projectile* projectile) {
 	}
 }
 
-void Level::fireProjectile(int type, const Vector2f& position,
-		double angle) {
+void Level::fireProjectile(int type, const Vector2f& position, double angle) {
 	Texture* bulletTexture = game->bulletTexture;
 	projectiles.push_back(
 			new Projectile(position.x, position.y, 3, angle - 90 * 3.141 / 180,
@@ -62,13 +61,33 @@ void Level::tick(double deltaTime) {
 		(*projectile)->move(deltaTime);
 	}
 
-	for(vector<Zombie*>::iterator enemy = enemies.begin(); enemy != enemies.end(); ++enemy){
+	for (vector<Zombie*>::iterator enemy = enemies.begin();
+			enemy != enemies.end(); ++enemy) {
 		(*enemy)->getAI()->tick(deltaTime);
+		Zombie *thisEnemy = *enemy;
+		for (vector<Zombie*>::iterator enemy2 = enemies.begin();
+				enemy2 != enemies.end(); ++enemy2) {
+			if (enemy2 == enemy) {
+				continue;
+			}
+			Zombie *otherEnemy = *enemy2;
+			double distance = thisEnemy->getDistance(otherEnemy);
+			double thisRadius = thisEnemy->getRadius();
+			double otherRadius = otherEnemy->getRadius();
+
+			if (distance < thisRadius + otherRadius) {
+				Vector2f vecMove = thisEnemy->getPointingVector(otherEnemy);
+				double moveIntensity = (distance - thisRadius - otherRadius);
+				thisEnemy->move(moveIntensity * vecMove.x,
+						moveIntensity * vecMove.y);
+			}
+		}
 	}
 }
 
 void Level::spawnZombie() {
-	Zombie *zombie = new Zombie(new Sprite(*(game->zombieTexture)), 1, 40, 0, 0);
+	Zombie *zombie = new Zombie(new Sprite(*(game->zombieTexture)), 1, 30, 0,
+			0);
 	ClassicZombieAI *ai = new ClassicZombieAI(this, zombie);
 
 	zombie->setAI(ai);

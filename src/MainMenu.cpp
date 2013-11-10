@@ -50,7 +50,7 @@ void MainMenu::createItem(int index, const string text, MainMenu::Option id,
 	option->background.setOrigin(Vector2f(150, 0));
 	option->background.setPosition(640, 400 + index * (55));
 	option->textObj.setColor(Color::White);
-	FloatRect textSize = options[0]->textObj.getLocalBounds();
+	FloatRect textSize = options[0]->textObj.getGlobalBounds();
 	option->textObj.setOrigin(textSize.width / 2, textSize.height / 2);
 	option->textObj.setPosition(640, 425 + index * (55) + adjust);
 

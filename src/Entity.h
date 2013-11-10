@@ -83,7 +83,7 @@ class Zombie: public Mob{
 		virtual int damage(int);
 		virtual void setPosition(double, double);
 		virtual double getMoveSpeed() {
-			return 70;
+			return 30;
 		}
 		virtual const Vector2f getBulletOutputPoint() const;
 		virtual double getAngle() const;
