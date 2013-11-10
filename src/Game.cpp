@@ -10,7 +10,8 @@
 
 using namespace std;
 
-Game::Game(): mode(1280, 720, 32) {
+Game::Game() :
+		mode(1280, 720, 32) {
 	cout << "Creating instance " << endl;
 	ctx.antialiasingLevel = 8;
 	splash = new RenderWindow(mode, "GunMan", Style::None, ctx);
@@ -22,7 +23,7 @@ Game::Game(): mode(1280, 720, 32) {
 int Game::onStart() {
 
 	splashTexture = new Texture();
-	if(!loadTexture(splashTexture, "res/splash.png")){
+	if (!loadTexture(splashTexture, "res/splash.png")) {
 		return 1;
 	}
 
@@ -35,11 +36,12 @@ int Game::onStart() {
 	splash->draw(*splashSprite);
 	splash->display();
 
-	if(!onLoad()){
+	if (!onLoad()) {
 		return 1;
 	}
 
-	while(splashTimer.getElapsedTime() < splashMin); // :P who cares?
+	while (splashTimer.getElapsedTime() < splashMin)
+		; // :P who cares?
 
 	splash->close();
 	delete splash;
@@ -53,34 +55,39 @@ int Game::onStart() {
 }
 
 bool Game::onLoad() {
-	if(!loadSprite(&logoSprite, &logoTexture, "res/logo.png")){
+	if (!loadSprite(&logoSprite, &logoTexture, "res/logo.png")) {
 		return false;
 	}
 	Vector2u logoSize = logoTexture->getSize();
-	logoSprite->setOrigin(logoSize.x/2, 0);
-	logoSprite->setPosition(width/2, 10);
+	logoSprite->setOrigin(logoSize.x / 2, 0);
+	logoSprite->setPosition(width / 2, 10);
 
-	if(!loadSprite(&menuBGSprite, &menuBGTexture, "res/menu_bg.png")){
+	if (!loadSprite(&menuBGSprite, &menuBGTexture, "res/menu_bg.png")) {
 		return false;
 	}
 
-	if(!loadSprite(&ambientSprite, &ambientTexture, "res/ambient.png")){
+	if (!loadSprite(&ambientSprite, &ambientTexture, "res/ambient.png")) {
 		return false;
 	}
 
 	menuFont = new Font();
-	if(!menuFont->loadFromFile("res/masterplan.ttf")){
+	if (!menuFont->loadFromFile("res/masterplan.ttf")) {
 		cout << "[SEVERE] Failed to open font" << endl;
 		return false;
-	}else{
+	} else {
 		cout << "[INFO] Loaded font" << endl;
 	}
 
-	if(!loadSprite(&heroSprite, &heroTexture, "res/zombie1.png")){
+	if (!loadSprite(&heroSprite, &heroTexture, "res/hero2.png")) {
 		return false;
 	}
 
-	hero = new Hero(heroSprite);
+	bulletTexture = new Texture();
+	if (!loadTexture(bulletTexture, "res/bullet.png")) {
+		return false;
+	}
+
+	level = new Level(new Hero(heroSprite), this);
 
 	mainMenu = new MainMenu(*menuFont);
 
@@ -88,10 +95,10 @@ bool Game::onLoad() {
 }
 
 bool Game::loadTexture(Texture* texture, const string& name) {
-	if(!texture->loadFromFile(name)){
+	if (!texture->loadFromFile(name)) {
 		cout << "[SEVERE] failed to load texture: " << name << endl;
 		return false;
-	}else{
+	} else {
 		cout << "[INFO] Texture loaded: " << name << endl;
 	}
 
@@ -100,7 +107,7 @@ bool Game::loadTexture(Texture* texture, const string& name) {
 
 bool Game::loadSprite(Sprite** sprite, Texture** texture, const string& name) {
 	*texture = new Texture();
-	if(!loadTexture(*texture, name)){
+	if (!loadTexture(*texture, name)) {
 		return false;
 	}
 	*sprite = new Sprite(**texture);

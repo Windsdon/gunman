@@ -9,7 +9,8 @@
 
 void Game::onRender() {
 	window->setActive(true); //activate on this thread
-	window->setFramerateLimit(60);
+	//window->setFramerateLimit(60);
+	window->setVerticalSyncEnabled(true);
 	RenderStates rs;
 	while (gameState != GameState::Stopped) {
 		if(gameState == GameState::Switching){
@@ -38,5 +39,10 @@ void Game::drawMainMenu() {
 
 void Game::drawScene(){
 	window->draw(*ambientSprite);
-	hero->draw(window);
+
+	for(vector<Projectile*>::iterator t = level->getProjectiles().begin(); t != level->getProjectiles().end(); ++t){
+		(*t)->draw(window);
+	}
+
+	level->getHero()->draw(window);
 }

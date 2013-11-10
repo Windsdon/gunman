@@ -9,6 +9,7 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include "AI.h"
 
 using namespace sf;
 using namespace std;
@@ -22,10 +23,10 @@ class Entity {
 		double getRadius() const;
 		virtual const Vector2f getPosition() const = 0;
 
-		virtual void tick() = 0;
-
 		virtual void rotate(double) = 0;
 		virtual void setPosition(double, double) = 0;
+
+		virtual const Vector2f getBulletOutputPoint() const = 0;
 
 	private:
 		double radius;
@@ -37,10 +38,12 @@ class Mob: public Entity {
 
 		virtual int damage(int) = 0;
 		virtual double getMoveSpeed() = 0;
+		virtual double getAngle() const = 0;
 
 	protected:
 		int life;
 		int maxLife;
+		double angle;
 };
 
 class Hero: public Mob {
@@ -48,13 +51,14 @@ class Hero: public Mob {
 		Hero(Sprite*);
 		void move(double, double);
 
-		virtual void tick();
 		virtual void rotate(double);
 		virtual const Vector2f getPosition() const;
 		virtual void draw(RenderWindow*);
 		virtual int damage(int);
 		virtual void setPosition(double, double);
-		virtual double getMoveSpeed() {return 90;};
+		virtual double getMoveSpeed() {return 90;}
+		virtual const Vector2f getBulletOutputPoint() const;
+		virtual double getAngle() const;
 
 	private:
 		Sprite *sprite;
@@ -63,3 +67,27 @@ class Hero: public Mob {
 
 };
 
+class Zombie: public Mob{
+	public:
+		Zombie(Sprite*, int, int, int, int);
+
+		virtual void rotate(double);
+		virtual const Vector2f getPosition() const;
+		virtual void draw(RenderWindow*);
+		virtual int damage(int);
+		virtual void setPosition(double, double);
+		virtual double getMoveSpeed() {
+			return 70;
+		}
+		virtual const Vector2f getBulletOutputPoint() const;
+		virtual double getAngle() const;
+
+		virtual void setAI(AI*);
+		virtual AI* getAI();
+
+	private:
+		Sprite *sprite;
+		AI* ai;
+
+
+};

@@ -11,11 +11,14 @@
 #include <string>
 #include "MainMenu.h"
 #include "Entity.h"
+#include "Projectile.h"
+#include "Level.h"
 
 using namespace sf;
 using namespace std;
 
 class Game {
+	friend class Level;
 	public:
 		Game();
 		int onStart();
@@ -51,7 +54,7 @@ class Game {
 		 */
 		GameState gameState;
 
-		Hero *hero;
+		Level *level;
 
 		int mouseX, mouseY;
 
@@ -79,6 +82,8 @@ class Game {
 		Texture *menuBGTexture;
 		Texture *ambientTexture;
 
+		Texture *bulletTexture;
+
 		Texture *heroTexture;
 
 		/*
@@ -103,6 +108,8 @@ class Game {
 		Clock splashTimer;
 		Time splashMin;
 		Clock tickTimer;
+		Clock shootTimer;
+		Time shootInterval;
 
 		/*
 		 * THREADS

@@ -27,6 +27,8 @@ void Game::loop() {
 
 void Game::onUpdate() {
 	Event e;
+	//bool shootScheduled = false;
+
 	while (window->pollEvent(e)) {
 		if (gameState == GameState::Menu) {
 			mainMenu->event(e);
@@ -38,6 +40,9 @@ void Game::onUpdate() {
 			mouseX = e.mouseMove.x;
 			mouseY = e.mouseMove.y;
 		}
+//		if (e.type == Event::MouseButtonPressed) {
+//			shootScheduled = true;
+//		}
 	}
 
 	float heroMoveX = 0, heroMoveY = 0;
@@ -61,12 +66,24 @@ void Game::onUpdate() {
 	Time delta = tickTimer.restart();
 	double deltaTime = delta.asSeconds();
 
-	Vector2f heroPos = hero->getPosition();
-	hero->rotate(atan2(mouseX - heroPos.x, mouseY - heroPos.y));
+	Hero *hero = level->getHero();
 
-	double heroMoveSpeed= hero->getMoveSpeed();
+	Vector2f heroPos = hero->getPosition();
+	double heroAngle = atan2(mouseX - heroPos.x, mouseY - heroPos.y);
+
+	hero->rotate(heroAngle);
+
+	double heroMoveSpeed = hero->getMoveSpeed();
+
 	hero->move(heroMoveX * heroMoveSpeed * deltaTime,
 			heroMoveY * heroMoveSpeed * deltaTime);
+
+	if (Mouse::isButtonPressed(Mouse::Left) && shootTimer.getElapsedTime() >= shootInterval) {
+		shootTimer.restart();
+		level->fireProjectile(Projectile::Type::Bullet, hero->getBulletOutputPoint(), heroAngle);
+	}
+
+	level->tick(deltaTime);
 
 	if (gameState == GameState::Menu) {
 		switch (mainMenu->getSelectedOption()) {
@@ -83,5 +100,6 @@ void Game::onUpdate() {
 }
 
 void Game::resetGame() {
-	hero->setPosition(width / 2, height / 2);
+	level->getHero()->setPosition(width / 2, height / 2);
+	shootInterval = seconds(0.5);
 }
